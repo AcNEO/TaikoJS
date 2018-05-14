@@ -23,6 +23,7 @@ var ldDon = new Image();
 ldDon.src = "assets/ld/don.png";
 
 var paused = false;
+var autoplay = false;
 
 var score = 0;
 var currentCombo = 0;
@@ -49,6 +50,39 @@ var song = {
 }
 
 var songTime = 0;
+
+
+//Key handler, brought to you by Rhythm Lunatic!
+var Keys = {
+	KEY_A  : 65,
+	KEY_D  : 68,
+	KEY_S  : 83,
+	KEY_W  : 87,
+	KEY_R  : 82,
+	KEY_UP : 38,
+	KEY_DOWN:40,
+	KEY_LEFT:37,
+	KEY_RIGHT:39,
+	KEY_ENTER:13,
+	KEY_SHIFT:16,
+	//The relevant keys
+	BTN_LEFTRIM:68,
+	BTN_LEFTDRUM:70,
+	BTN_RIGHTDRUM:74,
+	BTN_RIGHTRIM:75,
+	//Toggle autoplay.
+	KEY_8 : 56
+	
+};
+function isKeyHeld(key)
+{
+	return (curkeys[key] === true);
+}
+function isKeyDown(key)
+{
+	return (newkeys[key] === true);
+}
+
 
 function gameFrameworkInit(){
 	for (i = 0; i < 256; i++){
@@ -131,53 +165,68 @@ function gameUpdate(){
 			playfield.btlUpdate();
 			playfield.donUpdate();
 
-			if (newkeys[13]) {
+			//newkeys[70]
+			if (isKeyDown(Keys.KEY_ENTER)) {
 				paused = true;
 			}
+			if (isKeyDown(Keys.KEY_8)) {
+				autoplay = !autoplay;
+			}
 			
-			if (newkeys[71]) {
-				playfield.rtl.bHit = true;
-				playfield.rtl.ar = false;
-				playfield.rtl.f = 0;
-				playfield.rtl.uf = 0;
-				
-				playfield.drmh.don.currentTime = 0;
-				playfield.drmh.don.play();
-				
-				playfield.timingCheck("don");
+			//During autoplay, the player shouldn't be able to press anything.
+			//So instead autoplay checks if a note is overlapping the receptor and hits it as soon as it can.
+			//Due to how timing works, it checks as the note touches the leftmost part of the rim.
+			if (autoplay == true)
+			{
+				playfield.timingCheckAutoplay();
 			}
-			if (newkeys[72]) {
-				playfield.rtr.bHit = true;
-				playfield.rtr.ar = false;
-				playfield.rtr.f = 0;
-				playfield.rtr.uf = 0;
-				
-				playfield.drmh.don.currentTime = 0;
-				playfield.drmh.don.play();
-				
-				playfield.timingCheck("don");
-			}
-			if (newkeys[70]) {
-				playfield.btl.bHit = true;
-				playfield.btl.ar = false;
-				playfield.btl.f = 0;
-				playfield.btl.uf = 0;
-				
-				playfield.drmh.kat.currentTime = 0;
-				playfield.drmh.kat.play();
-				
-				playfield.timingCheck("kat");
-			}
-			if (newkeys[74]) {
-				playfield.btr.bHit = true;
-				playfield.btr.ar = false;
-				playfield.btr.f = 0;
-				playfield.btr.uf = 0;
-				
-				playfield.drmh.kat.currentTime = 0;
-				playfield.drmh.kat.play();
-				
-				playfield.timingCheck("kat");
+			else
+			{
+				//Your normal input handling code.
+				if (isKeyDown(Keys.BTN_LEFTDRUM)) {
+					playfield.rtl.bHit = true;
+					playfield.rtl.ar = false;
+					playfield.rtl.f = 0;
+					playfield.rtl.uf = 0;
+					
+					playfield.drmh.don.currentTime = 0;
+					playfield.drmh.don.play();
+					
+					playfield.timingCheck("don");
+				}
+				if (isKeyDown(Keys.BTN_RIGHTDRUM)) {
+					playfield.rtr.bHit = true;
+					playfield.rtr.ar = false;
+					playfield.rtr.f = 0;
+					playfield.rtr.uf = 0;
+					
+					playfield.drmh.don.currentTime = 0;
+					playfield.drmh.don.play();
+					
+					playfield.timingCheck("don");
+				}
+				if (isKeyDown(Keys.BTN_LEFTRIM)) {
+					playfield.btl.bHit = true;
+					playfield.btl.ar = false;
+					playfield.btl.f = 0;
+					playfield.btl.uf = 0;
+					
+					playfield.drmh.kat.currentTime = 0;
+					playfield.drmh.kat.play();
+					
+					playfield.timingCheck("kat");
+				}
+				if (isKeyDown(Keys.BTN_RIGHTRIM)) {
+					playfield.btr.bHit = true;
+					playfield.btr.ar = false;
+					playfield.btr.f = 0;
+					playfield.btr.uf = 0;
+					
+					playfield.drmh.kat.currentTime = 0;
+					playfield.drmh.kat.play();
+					
+					playfield.timingCheck("kat");
+				}
 			}
 			
 			for (var i = 0; i < song.noteArray.length; i++) {
@@ -185,7 +234,7 @@ function gameUpdate(){
 			}
 		}
 		else if (paused){
-			if (newkeys[13]) {
+			if (isKeyDown(Keys.KEY_ENTER)) {
 				paused = false;
 			}
 		}
@@ -244,6 +293,11 @@ function gameDraw(){
 		c.fillStyle = "white";
 		c.textAlign = "right";
 		c.fillText(score, 166, 220);
+		
+		if (autoplay)
+		{
+			c.fillText("AUTOPLAY = ON", cWidth/2,cHeight/2)
+		}
 		
 		if (fadeIn == true) { //fade in effect after loading screen
 			playfield.fade();
