@@ -537,6 +537,46 @@ class playfieldClass {
 		}
 	}
 	
+	
+	//AKA lag hell
+	timingCheckAutoplay()
+	{
+		var i = song.noteArray.findIndex(function(obj) {
+			return obj.active == true;
+		});
+
+		if (typeof song.noteArray[i] == "undefined") {
+			return;
+		}
+		
+		if (song.noteArray[i].x <= 400)
+		{
+			if (song.noteArray[i].type == 1)
+			{
+				this.drmh.don.currentTime = 0; //Reset the sfx if it was played before (There's no way to play it over itself)
+				this.drmh.don.play();
+			}
+			else if (song.noteArray[i].type == 2)
+			{
+				this.drmh.kat.currentTime = 0;
+				this.drmh.kat.play();
+			}
+			score += 1960;
+			currentCombo++;
+			
+			song.noteArray[i].active = false;
+			song.noteArray[i].clr.ar = true;
+			
+			this.grhit.ar = true;
+			this.grhit.uf = 0;
+			this.grhit.f = 0;
+			
+			this.gdhit.ar = false;
+			this.gdhit.uf = 0;
+			this.gdhit.f = 0;
+		}
+	}
+	
 	draw() {
 		//draw moving background
 		c.drawImage(this.mvbg.img, this.mvbg.x, this.mvbg.y);
