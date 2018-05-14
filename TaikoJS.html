@@ -1,0 +1,28 @@
+<html>
+<head>
+
+	<style>
+		canvas{
+			background: #000000;
+		}
+        
+        @font-face {
+            font-family: "Taiko";
+            src: url("assets/fnt/taiko.ttf");
+        }
+	</style>
+    
+	<script src="classes.js"></script>
+	<script src="functions.js"></script>
+	<script src="framework.js"></script>
+
+</head>
+
+
+<body onload="gameFrameworkInit()">
+	
+	<canvas id="myCanvas" width="1280" height="720"></canvas><br><br>
+    Pick Song Folder: <input type=file id="idChartFolder" webkitdirectory directory multiple onChange="load(this.files)"><br>
+
+</body>
+</html>
