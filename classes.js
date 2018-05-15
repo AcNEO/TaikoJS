@@ -401,7 +401,10 @@ class playfieldClass {
 			}
 		}
 	}
-	
+	/**
+	 * Checks if you hit a note, and how on-time you hit it.
+	 * @param {string} note Either "don" or "kat", depending on what type of note you want to check. 
+	 */
 	timingCheck(note) {
 		var i = song.noteArray.findIndex(function(obj) {
 			return obj.active == true;
@@ -610,7 +613,9 @@ class playfieldClass {
 	}
 	
 	
-	//AKA lag hell
+	/**
+	 * Checks the leftmost note, then hits it when it overlaps the note receptor.
+	 */
 	timingCheckAutoplay()
 	{
 		var i = song.noteArray.findIndex(function(obj) {
