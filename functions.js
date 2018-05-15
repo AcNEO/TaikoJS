@@ -54,14 +54,35 @@ function load(files) {
         
         reader.readAsText(song.tja);
 	}
+    else {
+        //i is for the position in the song.chart array
+        //j is basically i but will not increment if the note being added is a blank or unimplemented note.
+        
+        //run through entire chart array
+        for (i = 0, j = 0; i < song.chart.length; i++) {
+            //if the note isnt a blank note or unimplemented		
+            if (song.chart[i] != 0 && song.chart[i] != 3 && song.chart[i] != 4) {
+                //instantiate new note and push to the noteArray
+                song.noteArray.push(new note(song.chart[i]));
+                //calculate note position based on array position and song timing offset
+                song.noteArray[j].x += 35 * i;
+                song.noteArray[j].id = j;
+                //increment j since the last note was valid.
+                j++; 
+            }
+        }
+        
+        for (i = 0; i < song.noteArray.length; i++) {
+            song.noteArray[i].loadNote();
+        }
+        
+        startGame();
+    }
 }
 
 function parse(tja) {
 	var meta = [];
 	var chart = [];
-	
-    console.log("parsing...");
-    
     var content = tja;
     
     var lines = content.split("\r");
@@ -133,8 +154,6 @@ function clearNote(note) {
 	});
 	
 	song.noteArray.splice(result, 1);
-	
-	console.log("cleared note, id: " + result + " noteArray length: " + song.noteArray.length);
 }
 
 // cubic bezier percent is 0-1

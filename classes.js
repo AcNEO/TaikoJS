@@ -196,16 +196,27 @@ class playfieldClass {
     }
     
     grtextUpdate() {
-        this.grtext.uf += 1;
-        
-        if (this.grtext.f != 17) {
-            if (this.grtext.uf == 2) {
-                this.grtext.f++;
+        if (this.grtext.ar == true) {
+            this.grtext.uf += 1;
+            
+            if (this.grtext.f != 17) {
+                if (this.grtext.uf == 2) {
+                    this.grtext.f++;
+                    this.grtext.uf = 0;
+                }
+            }
+            else {
+                this.grtext.f = 0;
                 this.grtext.uf = 0;
+                this.grtext.ar = false;
             }
         }
         else {
-            this.grtext.f = 0;
+            if (this.grtext.bHit == true) {
+                this.grtext.uf += 1;
+                this.grtext.ar = true;
+                this.grtext.bHit = false;
+            }
         }
     }
     
@@ -235,16 +246,27 @@ class playfieldClass {
     }
     
     gdtextUpdate() {
-        this.gdtext.uf += 1;
-        
-        if (this.gdtext.f != 17) {
-            if (this.gdtext.uf == 2) {
-                this.gdtext.f++;
+        if (this.gdtext.ar == true) {
+            this.gdtext.uf += 1;
+            
+            if (this.gdtext.f != 17) {
+                if (this.gdtext.uf == 2) {
+                    this.gdtext.f++;
+                    this.gdtext.uf = 0;
+                }
+            }
+            else {
+                this.gdtext.f = 0;
                 this.gdtext.uf = 0;
+                this.gdtext.ar = false;
             }
         }
         else {
-            this.gdtext.f = 0;
+            if (this.gdtext.bHit == true) {
+                this.gdtext.uf += 1;
+                this.gdtext.ar = true;
+                this.gdtext.bHit = false;
+            }
         }
     }
 	
@@ -416,6 +438,14 @@ class playfieldClass {
 				this.grhit.ar = false;
 				this.grhit.uf = 0;
 				this.grhit.f = 0;
+                
+                this.grhit.ar = false;
+				this.grhit.uf = 0;
+				this.grhit.f = 0;
+                
+				this.gdtext.ar = true;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
 			}
 			else if (song.noteArray[i].x <= 420 
 					&& song.noteArray[i].x >= 346 
@@ -434,6 +464,14 @@ class playfieldClass {
 				this.gdhit.ar = false;
 				this.gdhit.uf = 0;
 				this.gdhit.f = 0;
+                
+				this.grtext.ar = true;
+				this.grtext.uf = 0;
+				this.grtext.f = 0;
+                
+                this.gdtext.ar = false;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
 			}
 			else if (song.noteArray[i].x <= 345 
 					&& song.noteArray[i].x >= 316 
@@ -452,6 +490,10 @@ class playfieldClass {
 				this.grhit.ar = false;
 				this.grhit.uf = 0;
 				this.grhit.f = 0;
+                
+				this.gdtext.ar = true;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
 			}
 			else if (song.noteArray[i].x <= 315 
 					&& song.noteArray[i].type > 0) { //outside miss
@@ -489,6 +531,20 @@ class playfieldClass {
 				this.grhit.ar = false;
 				this.grhit.uf = 0;
 				this.grhit.f = 0;
+                
+                this.grtext.ar = false;
+				this.grtext.uf = 0;
+				this.grtext.f = 0;
+                
+				this.grhit.ar = false;
+				this.grhit.uf = 0;
+				this.grhit.f = 0;
+                
+				this.gdtext.ar = true;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
+                
+                
 			}
 			else if (song.noteArray[i].x <= 420 
 					&& song.noteArray[i].x >= 346 
@@ -507,6 +563,14 @@ class playfieldClass {
 				this.gdhit.ar = false;
 				this.gdhit.uf = 0;
 				this.gdhit.f = 0;
+                
+				this.grtext.ar = true;
+				this.grtext.uf = 0;
+				this.grtext.f = 0;
+                
+                this.gdtext.ar = false;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
 			}
 			else if (song.noteArray[i].x <= 345 
 					&& song.noteArray[i].x >= 316 
@@ -525,6 +589,14 @@ class playfieldClass {
 				this.grhit.ar = false;
 				this.grhit.uf = 0;
 				this.grhit.f = 0;
+                
+				this.grhit.ar = false;
+				this.grhit.uf = 0;
+				this.grhit.f = 0;
+                
+				this.gdtext.ar = true;
+				this.gdtext.uf = 0;
+				this.gdtext.f = 0;
 			}
 			else if (song.noteArray[i].x <= 315 
 					&& song.noteArray[i].type > 0) { //outside miss
@@ -574,6 +646,10 @@ class playfieldClass {
 			this.gdhit.ar = false;
 			this.gdhit.uf = 0;
 			this.gdhit.f = 0;
+            
+            this.grtext.ar = true;
+            this.grtext.uf = 0;
+            this.grtext.f = 0;
 		}
 	}
 	
@@ -597,12 +673,10 @@ class playfieldClass {
 		if (this.gdhit.ar == true)
 			c.drawImage(this.gdhit.img, this.gdhit.f * this.gdhit.w, 0, this.gdhit.w, this.gdhit.h, this.gdhit.x, this.gdhit.y, this.gdhit.w, this.gdhit.h);
 		
-        /*
-        if (hit == "great")
+        if (this.grtext.ar == true)
             c.drawImage(this.grtext.img, this.grtext.f * this.grtext.w, 0, this.grtext.w, this.grtext.h, this.grtext.x, this.grtext.y, this.grtext.w, this.grtext.h);
-        else
+        else if (this.gdtext.ar == true) 
             c.drawImage(this.gdtext.img, this.gdtext.f * this.gdtext.w, 0, this.gdtext.w, this.gdtext.h, this.gdtext.x, this.gdtext.y, this.gdtext.w, this.gdtext.h);
-        */
         
         c.drawImage(this.don.img, this.don.f * this.don.w, 0, this.don.w, this.don.h, this.don.x, this.don.y, this.don.w, this.don.h);
 	}

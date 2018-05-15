@@ -145,14 +145,16 @@ function gameUpdate(){
 		*/
 		
 		if (!paused) {
-			playfield.mvbgUpdate();
-			playfield.grhitUpdate();
-			playfield.gdhitUpdate();
-			playfield.rtlUpdate();
-			playfield.rtrUpdate();
-			playfield.btrUpdate();
-			playfield.btlUpdate();
-			playfield.donUpdate();
+            playfield.mvbgUpdate();
+            playfield.grhitUpdate();
+            playfield.grtextUpdate();
+            playfield.gdhitUpdate();
+            playfield.gdtextUpdate();
+            playfield.rtlUpdate();
+            playfield.rtrUpdate();
+            playfield.btrUpdate();
+            playfield.btlUpdate();
+            playfield.donUpdate();
 
 			//newkeys[70]
 			if (isKeyDown(Keys.KEY_ENTER)) {
@@ -234,7 +236,9 @@ function gameUpdate(){
 	else if (gamestate == "finished") {
 		playfield.mvbgUpdate();
 		playfield.grhitUpdate();
+        playfield.grtextUpdate();
 		playfield.gdhitUpdate();
+        playfield.gdtextUpdate();
 		playfield.rtlUpdate();
 		playfield.rtrUpdate();
 		playfield.btrUpdate();
