@@ -54,18 +54,7 @@ var songTime = 0;
 
 //Key handler, brought to you by Rhythm Lunatic!
 var Keys = {
-	KEY_A  : 65,
-	KEY_D  : 68,
-	KEY_S  : 83,
-	KEY_W  : 87,
-	KEY_R  : 82,
-	KEY_UP : 38,
-	KEY_DOWN:40,
-	KEY_LEFT:37,
-	KEY_RIGHT:39,
-	KEY_ENTER:13,
-	KEY_SHIFT:16,
-	//The relevant keys
+    KEY_ENTER:13,
 	BTN_LEFTRIM:68,
 	BTN_LEFTDRUM:70,
 	BTN_RIGHTDRUM:74,
@@ -168,7 +157,9 @@ function gameUpdate(){
 			//newkeys[70]
 			if (isKeyDown(Keys.KEY_ENTER)) {
 				paused = true;
+                music.pause();
 			}
+            
 			if (isKeyDown(Keys.KEY_8)) {
 				autoplay = !autoplay;
 			}
@@ -236,6 +227,7 @@ function gameUpdate(){
 		else if (paused){
 			if (isKeyDown(Keys.KEY_ENTER)) {
 				paused = false;
+                music.play();
 			}
 		}
     }
@@ -296,7 +288,8 @@ function gameDraw(){
 		
 		if (autoplay)
 		{
-			c.fillText("AUTOPLAY = ON", cWidth/2,cHeight/2)
+            c.font = "20px Taiko";
+			c.fillText("AUTOPLAY", 460, 345);
 		}
 		
 		if (fadeIn == true) { //fade in effect after loading screen

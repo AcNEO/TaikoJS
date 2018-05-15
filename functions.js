@@ -119,10 +119,7 @@ function parse(tja) {
 
 function startGame() {
     music.src = URL.createObjectURL(song.wav);
-    
-    music.onend = function() {
-        URL.revokeObjectURL(this.src);
-    }
+    music.loop = false;
 	
     playfield.drmh.don.play();
     titleVoice.play();

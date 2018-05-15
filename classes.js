@@ -621,15 +621,10 @@ class playfieldClass {
 			else {
 				this.opacity = 1;
 				c.globalAlpha = this.opacity;
-
+                fadeIn = false;
                 music.play();
 			}
 		}
-	}
-	
-	endSong() {
-		music.pause();
-		music.currentTime = 0;
 	}
 }
 
