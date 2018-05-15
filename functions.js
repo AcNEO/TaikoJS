@@ -23,93 +23,97 @@ function load(files) {
     }
     
 	if (parsing == true) {
-		parse(song.tja);
+        var reader = new FileReader();
+        
+        reader.addEventListener('load', function() {
+            parse(reader.result);
+            
+            //i is for the position in the song.chart array
+            //j is basically i but will not increment if the note being added is a blank or unimplemented note.
+            
+            //run through entire chart array
+            for (i = 0, j = 0; i < song.chart.length; i++) {
+                //if the note isnt a blank note or unimplemented		
+                if (song.chart[i] != 0 && song.chart[i] != 3 && song.chart[i] != 4) {
+                    //instantiate new note and push to the noteArray
+                    song.noteArray.push(new note(song.chart[i]));
+                    //calculate note position based on array position and song timing offset
+                    song.noteArray[j].x += 35 * i;
+                    song.noteArray[j].id = j;
+                    //increment j since the last note was valid.
+                    j++; 
+                }
+            }
+            
+            for (i = 0; i < song.noteArray.length; i++) {
+                song.noteArray[i].loadNote();
+            }
+            
+            startGame();
+        });
+        
+        reader.readAsText(song.tja);
 	}
-	
-	//i is for the position in the song.chart array
-	//j is basically i but will not increment if the note being added is a blank or unimplemented note.
-	
-	//run through entire chart array
-	for (i = 0, j = 0; i < song.chart.length; i++) {
-		//if the note isnt a blank note or unimplemented		
-		if (song.chart[i] != 0 && song.chart[i] != 3 && song.chart[i] != 4) {
-			//instantiate new note and push to the noteArray
-			song.noteArray.push(new note(song.chart[i]));
-			//calculate note position based on array position and song timing offset
-			song.noteArray[j].x += 35 * i;
-			song.noteArray[j].id = j;
-			//increment j since the last note was valid.
-			j++; 
-		}
-    }
-	
-	for (i = 0; i < song.noteArray.length; i++) {
-		song.noteArray[i].loadNote();
-	}
-	
-    startGame();
 }
 
 function parse(tja) {
-    var reader = new FileReader();
 	var meta = [];
 	var chart = [];
 	
-	reader.onload = function(e) {
-		var content = reader.result;
-		
-		var lines = content.split("\r");
-		
-		for (var i = 0; i < lines.length; i++) {
-			if (lines[i] == "\n") {
-				lines.splice(i, 1);
-			}
-		}
-		
-		for (var i = 0; i < lines.length; i++) {
-			if (lines[i].includes("\n")) {
-				lines[i] = lines[i].replace("\n", "");
-			}
-			
-			if (lines[i].includes(",")) {
-				lines[i] = lines[i].replace(",", "");
-			}
-		}
-		
-		for (var i = 0; i < lines.length; i++) {
-			if (lines[i] == "#START") {
-				
-				meta = lines.slice(0, i);
-				chart = lines.slice(i+1, lines.length-1);
-			}
-		}
-		
-		for (var i = 0; i < meta.length; i++) {
-			if (meta[i].includes("DEMOSTART:")) {
-				meta[i] = meta[i].replace("DEMOSTART:", "");
-			}
-		}
-		
-		var tmpChart = [];
-		
-		for (var i = 0; i < chart.length; i++) {
-			if (chart[i] != "#GOGOSTART" && chart[i] != "#GOGOEND") {
-				tmpChart.push(chart[i]);
-			}
-		}
-		
-		chart = tmpChart.slice(0);
-		
-		chart = chart.join("");
-		
-		chart = chart.split("");
-		
-		for (var i = 0; i < chart.length; i++) { 
-			chart[i] = parseInt(chart[i], 10); 
-		}
-	}
-	reader.readAsText(tja);
-	
+    console.log("parsing...");
+    
+    var content = tja;
+    
+    var lines = content.split("\r");
+    
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i] == "\n") {
+            lines.splice(i, 1);
+        }
+    }
+    
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i].includes("\n")) {
+            lines[i] = lines[i].replace("\n", "");
+        }
+        
+        if (lines[i].includes(",")) {
+            lines[i] = lines[i].replace(",", "");
+        }
+    }
+    
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i] == "#START") {
+            
+            meta = lines.slice(0, i);
+            chart = lines.slice(i+1, lines.length-1);
+        }
+    }
+    
+    for (var i = 0; i < meta.length; i++) {
+        if (meta[i].includes("DEMOSTART:")) {
+            meta[i] = meta[i].replace("DEMOSTART:", "");
+        }
+    }
+    
+    var tmpChart = [];
+    
+    for (var i = 0; i < chart.length; i++) {
+        if (chart[i] != "#GOGOSTART" && chart[i] != "#GOGOEND") {
+            tmpChart.push(chart[i]);
+        }
+    }
+    
+    chart = tmpChart.slice(0);
+    
+    chart = chart.join("");
+    
+    chart = chart.split("");
+    
+    for (var i = 0; i < chart.length; i++) { 
+        chart[i] = parseInt(chart[i], 10); 
+    }
+    
 	song.chart = chart.slice(0);
 }
 
