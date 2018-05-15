@@ -53,6 +53,10 @@ var songTime = 0;
 
 
 //Key handler, brought to you by Rhythm Lunatic!
+
+/**
+ * A dictionary containing commonly used keys.
+ */
 var Keys = {
 	KEY_A  : 65,
 	KEY_D  : 68,
@@ -74,10 +78,18 @@ var Keys = {
 	KEY_8 : 56
 	
 };
+/**
+ * Checks if a key is being held. Will return true until the key is unpressed.
+ * @param {number} key The value of the key you want to check. 
+ */
 function isKeyHeld(key)
 {
 	return (curkeys[key] === true);
 }
+/**
+ * Checks if a key has been pressed. Will return true once, then false until the key is pressed again.
+ * @param {number} key The value of the key you want to check.
+ */
 function isKeyDown(key)
 {
 	return (newkeys[key] === true);
