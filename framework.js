@@ -4,6 +4,12 @@ var cWidth, cHeight;
 
 var curkeys = [];
 var newkeys = [];
+//For checking the controller's buttons.
+var controllerConnected = false;
+//Index of the first xinput controller it finds
+var controllerIndex = 0;
+var oldButtons = [];
+var curButtons = [];
 
 var playfield = new playfieldClass();
 var title = new titleClass();
@@ -24,6 +30,8 @@ ldDon.src = "assets/ld/don.png";
 
 var paused = false;
 var autoplay = false;
+//Displays key & button states if true
+var debugInfo = false;
 
 var score = 0;
 var currentCombo = 0;
@@ -54,35 +62,79 @@ var songTime = 0;
 
 //Key handler, brought to you by Rhythm Lunatic!
 
-/*
-    A dictionary containing commonly used keys.
-*/
+
+//A dictionary containing commonly used keys.
 var Keys = {
-    KEY_ENTER : 13,
-	BTN_LEFTRIM : 70,
-	BTN_LEFTDRUM : 71,
-	BTN_RIGHTDRUM : 72,
-	BTN_RIGHTRIM : 74,
+    KEY_ENTER:13,
+	BTN_LEFTRIM:68,
+	BTN_LEFTDRUM:70,
+	BTN_RIGHTDRUM:74,
+	BTN_RIGHTRIM:75,
 	//Toggle autoplay.
 	KEY_8 : 56
 	
 };
-/*
-    Checks if a key is being held. Will return true until the key is unpressed.
-    @param {number} key The value of the key you want to check. 
-*/
+//Checks if a key is being held. Will return true until the key is unpressed.
 function isKeyHeld(key)
 {
 	return (curkeys[key] === true);
 }
-/*
-    Checks if a key has been pressed. Will return true once, then false until the key is pressed again.
-    @param {number} key The value of the key you want to check.
-*/
+//Checks if a key has been pressed. Will return true once, then false until the key is pressed again.
 function isKeyDown(key)
 {
+	if (controllerConnected)
+	{
+		if (checkGamepadButtons(key)) return true;
+	}
 	return (newkeys[key] === true);
 }
+
+//Xinput buttons
+var Buttons = {
+	DPAD_UP : 12,
+	DPAD_DOWN : 13,
+	DPAD_LEFT : 14,
+	DPAD_RIGHT : 15,
+	BTN_A : 0,
+	BTN_B : 1,
+	BTN_X : 2,
+	BTN_Y : 3,
+	BTN_SELECT : 8,
+	BTN_START : 9,
+	//LB, RB, whatever
+	BTN_L1 : 4,
+	BTN_R1 : 5
+};
+
+function checkGamepadButtons(key)
+{
+	if (key == Keys.BTN_LEFTRIM)
+	{
+		return isButtonDown(Buttons.BTN_L1);
+	}
+	else if (key == Keys.BTN_LEFTDRUM)
+	{
+		return (isButtonDown(Buttons.DPAD_DOWN) || isButtonDown(Buttons.DPAD_LEFT) || isButtonDown(Buttons.DPAD_RIGHT) || isButtonDown(Buttons.DPAD_UP))
+	}
+	else if (key == Keys.BTN_RIGHTDRUM)
+	{
+		return (isButtonDown(Buttons.BTN_A) || isButtonDown(Buttons.BTN_B) || isButtonDown(Buttons.BTN_X) || isButtonDown(Buttons.BTN_Y))
+	}
+	else if (key == Keys.RIGHTRIM)
+	{
+		return (isButtonDown(Buttons.BTN_R1))
+	}
+	else if (key == Keys.KEY_ENTER)
+	{
+		return (isButtonDown(Buttons.START));
+	}
+};
+
+function isButtonDown(button)
+{
+	return (curButtons[button] && !oldButtons[button])
+}
+
 
 
 function gameFrameworkInit(){
@@ -96,27 +148,56 @@ function gameFrameworkInit(){
 	cHeight = myCanvas.height;
 
 	window.addEventListener('keydown',
-							 function(e){
-								if (!curkeys[e.keyCode]){
-									curkeys[e.keyCode] = true;
-									newkeys[e.keyCode] = true;
-								}
-							 }
-						   );
+		function(e){
+			if (!curkeys[e.keyCode]){
+				curkeys[e.keyCode] = true;
+				newkeys[e.keyCode] = true;
+			}
+		}
+	);
+
+	window.addEventListener("gamepadconnected", function(e) {
+		console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+		e.gamepad.index, e.gamepad.id,
+		e.gamepad.buttons.length, e.gamepad.axes.length);
+		//Ignore non xinput controllers.
+		if (e.gamepad.id == "xinput")
+		{
+			controllerIndex = e.gamepad.index;
+			controllerConnected = true;
+		}
+	});
+	
+	window.addEventListener("gamepaddisconnected", function(e) {
+		console.log("Gamepad disconnected from index %d: %s",
+		e.gamepad.index, e.gamepad.id);
+		if (e.gamepad.index == controllerIndex)
+		{
+			controllerConnected = false;
+		}
+	});
 	
 	window.addEventListener('keyup',
-							 function(e){ curkeys[e.keyCode] = false; }
-						   );
-                           
+		function(e){ curkeys[e.keyCode] = false; }
+	);
+
     titleVoice.addEventListener('ended',
-                                    function(e) {fadeOut = true;}
-                               );							   
+		function(e) {fadeOut = true;}
+	);
 
     window.requestAnimationFrame(gameUpdate);
 }
 
 
 function gameUpdate(){
+	//Gamepad checking is done per frame instead of event listeners, so check the state every frame.
+	if (controllerConnected)
+	{
+		var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+		curButtons = gamepads[controllerIndex].buttons.map(button => button.pressed);
+	}
+	
+	
     if (gamestate == "play") {
 		
 		if (song.noteArray.length == 0) {
@@ -263,6 +344,11 @@ function gameUpdate(){
     else if (gamestate == "title") {
     }
 
+	if (controllerConnected)
+	{
+		oldButtons = curButtons;
+		//newButtons = Array.apply(null, Array(curButtons.length)).map(function () {return false;});
+	}
 	for (i = 0; i < 256; i++){
 		newkeys[i] = false;
 	}
@@ -345,5 +431,36 @@ function gameDraw(){
     }
 	else if (gamestate == "load") {
 		loading.draw();
+	}
+	
+	
+	if (debugInfo)
+	{
+		c.font = "30px Taiko";
+		c.fillStyle = "white";
+		c.textAlign = "left";
+		c.fillText("Keys held: ", 0, cHeight-50);
+		//Check keys
+		var l = 0;
+		for (var i = 0; i < 256; i++) {
+			if (curkeys[i] === true)
+			{
+				c.fillText(i,180+l*50,cHeight-50);
+				l++;
+			}
+		}
+		//Check buttons
+		if (controllerConnected)
+		{
+			c.fillText("Buttons held: ", 0, cHeight-10);
+			l = 0;
+			for (var i = 0; i < curButtons.length; i++) {
+				if (curButtons[i] == true)
+				{
+					c.fillText(i,230+l*50,cHeight-10);
+					l++;
+				}
+			}
+		}
 	}
 }
