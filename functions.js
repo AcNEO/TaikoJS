@@ -5,7 +5,7 @@ var parsing = true;
  * @param {FileList} files A folder containing one tja and a compatible audio file.
  */
 function load(files) {
-    var name1 = files[0].name;
+    /*var name1 = files[0].name;
     var name2 = files[1].name;
     
     if (name1.split(".").pop() == "tja") {
@@ -24,6 +24,17 @@ function load(files) {
             || name2.split(".").pop() == "mp3"
             || name2.split(".").pop() == "ogg") {
         song.wav = files[1];
+    }*/
+    for (var i = 0; i < files.length; i++)
+    {
+        if (files[i].name.split(".").pop() == "tja") {
+            song.tja = files[i];
+        }
+        else if (files[i].name.split(".").pop() == "wav"
+            || files[i].name.split(".").pop() == "mp3"
+            || files[i].name.split(".").pop() == "ogg") {
+            song.wav = files[i];
+        }
     }
     
 	if (parsing == true) {

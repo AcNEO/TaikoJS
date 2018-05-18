@@ -470,12 +470,12 @@ function gameDraw(){
 		//Check buttons
 		if (controllerConnected)
 		{
-			c.fillText("Buttons held: ", 0, cHeight-10);
+			c.fillText("Buttons held: ", 0, cHeight-90);
 			l = 0;
 			for (var i = 0; i < curButtons.length; i++) {
 				if (curButtons[i] == true)
 				{
-					c.fillText(i,230+l*50,cHeight-10);
+					c.fillText(i,230+l*50,cHeight-90);
 					l++;
 				}
 			}
