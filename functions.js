@@ -1,5 +1,9 @@
 var parsing = true;
 
+/**
+ * The function that parses a tja.
+ * @param {FileList} files A folder containing one tja and a compatible audio file.
+ */
 function load(files) {
     var name1 = files[0].name;
     var name2 = files[1].name;
@@ -79,7 +83,10 @@ function load(files) {
         startGame();
     }
 }
-
+/**
+ * Parses the tja chart.
+ * @param {string} tja A string containing the contents of the entire tja file.
+ */
 function parse(tja) {
 	var meta = [];
 	var chart = [];

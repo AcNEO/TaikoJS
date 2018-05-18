@@ -1,4 +1,7 @@
 class playfieldClass {
+	/**
+	 * Loads and positions all the sounds & images needed for the gameplay screen.
+	 */
 	constructor() {
 		//static background
 		this.stbg = {

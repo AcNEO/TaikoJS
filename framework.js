@@ -31,7 +31,7 @@ ldDon.src = "assets/ld/don.png";
 var paused = false;
 var autoplay = false;
 //Displays key & button states if true
-var debugInfo = false;
+var debugInfo = true;
 
 var score = 0;
 var currentCombo = 0;
@@ -74,12 +74,18 @@ var Keys = {
 	KEY_8 : 56
 	
 };
-//Checks if a key is being held. Will return true until the key is unpressed.
+/**
+ * Checks if a key is being held. Will return true until the key is unpressed.
+ * @param {number} key 
+ */
 function isKeyHeld(key)
 {
 	return (curkeys[key] === true);
 }
-//Checks if a key has been pressed. Will return true once, then false until the key is pressed again.
+/**
+ * Checks if a key has been pressed. Will return true once, then false until the key is pressed again.
+ * @param {number} key 
+ */
 function isKeyDown(key)
 {
 	if (controllerConnected)
@@ -106,37 +112,47 @@ var Buttons = {
 	BTN_R1 : 5
 };
 
+/**
+ * Checks a keyboard key against possible gamepad keys. For example, checking Keys.BTN_LEFTDRUM (aka F, keycode 70) will check the D-Pad for any inputs.
+ * @param {number} key The corresponding keyboard key to check. Usually a key from the Keys dict.
+ */
 function checkGamepadButtons(key)
 {
-	if (key == Keys.BTN_LEFTRIM)
+	if (key === Keys.BTN_LEFTRIM)
 	{
 		return isButtonDown(Buttons.BTN_L1);
 	}
-	else if (key == Keys.BTN_LEFTDRUM)
+	else if (key === Keys.BTN_RIGHTRIM)
+	{
+		return isButtonDown(Buttons.BTN_R1);
+	}
+	else if (key === Keys.BTN_LEFTDRUM)
 	{
 		return (isButtonDown(Buttons.DPAD_DOWN) || isButtonDown(Buttons.DPAD_LEFT) || isButtonDown(Buttons.DPAD_RIGHT) || isButtonDown(Buttons.DPAD_UP))
 	}
-	else if (key == Keys.BTN_RIGHTDRUM)
+	else if (key === Keys.BTN_RIGHTDRUM)
 	{
 		return (isButtonDown(Buttons.BTN_A) || isButtonDown(Buttons.BTN_B) || isButtonDown(Buttons.BTN_X) || isButtonDown(Buttons.BTN_Y))
 	}
-	else if (key == Keys.RIGHTRIM)
-	{
-		return (isButtonDown(Buttons.BTN_R1))
-	}
-	else if (key == Keys.KEY_ENTER)
+	else if (key === Keys.KEY_ENTER)
 	{
 		return (isButtonDown(Buttons.START));
 	}
 };
 
+/**
+ * Checks if a button has been pressed. It will return true once, then false until the button has been released and pressed again.
+ * @param {number} button The gamepad button to check. Usually a button from the Buttons dict.
+ */
 function isButtonDown(button)
 {
 	return (curButtons[button] && !oldButtons[button])
 }
 
 
-
+/**
+ * Initializes the game.
+ */
 function gameFrameworkInit(){
 	for (i = 0; i < 256; i++){
 		curkeys[i] = false;
@@ -161,9 +177,10 @@ function gameFrameworkInit(){
 		e.gamepad.index, e.gamepad.id,
 		e.gamepad.buttons.length, e.gamepad.axes.length);
 		//Ignore non xinput controllers.
-		if (e.gamepad.id == "xinput")
+		if (e.gamepad.id == "xinput" || e.gamepad.id == "Xbox 360 Controller (XInput STANDARD GAMEPAD)")
 		{
 			controllerIndex = e.gamepad.index;
+			console.log("Found a compatible controller at index "+ controllerIndex);
 			controllerConnected = true;
 		}
 	});
@@ -190,13 +207,14 @@ function gameFrameworkInit(){
 
 
 function gameUpdate(){
+	
 	//Gamepad checking is done per frame instead of event listeners, so check the state every frame.
 	if (controllerConnected)
 	{
 		var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : []);
+		//Check each button class of the gamepad, then transfer each one's button.pressed bool into an array of which buttons are currently pressed.
 		curButtons = gamepads[controllerIndex].buttons.map(button => button.pressed);
 	}
-	
 	
     if (gamestate == "play") {
 		
